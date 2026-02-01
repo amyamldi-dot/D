@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Vinted Manager Pro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+```
+    body {
+        margin: 0;
+        padding: 0;
+        overflow-x: hidden;
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+    }
+
+    #app {
+        min-height: 100vh;
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 100%);
+        color: white;
+        padding: 20px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .bg-effect {
+        position: absolute;
+        top: -50%;
+        left: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle at 30% 50%, rgba(88, 28, 135, 0.15) 0%, transparent 50%),
+                    radial-gradient(circle at 70% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+        animation: float 20s ease-in-out infinite;
+        pointer-events: none;
+    }
+
+    @keyframes float {
+        0%, 100% { transform: translate(0, 0) rotate(0deg); }
+        33% { transform: translate(30px, -30px) rotate(5deg); }
+        66% { transform: translate(-20px, 20px) rotate(-5deg); }
+    }
+
+    @keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    .header {
+        margin-bottom: 32px;
+        animation: slideUp 0.6s ease-out;
+    }
+
+    .title {
+        font-size: 42px;
+        font-weight: 700;
+        margin: 0 0 8px 0;
+        background: linear-gradient(135deg, #ffffff 0%, #a78bfa 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -1px;
+    }
+
+    .subtitle {
+        font-size: 16px;
+        color: rgba(255, 255, 255, 0.6);
+        margin: 0;
+    }
+
+    .tabs {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 32px;
+        animation: slideUp 0.6s ease-out;
+    }
+
+    .tab {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 12px 24px;
+        color: rgba(255, 255, 255, 0.6);
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .tab.active {
+        background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+        border-color: transparent;
+        color: white;
+        box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 20px;
+        margin-bottom: 32px;
+    }
+
+    .stat-card {
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(59, 130, 246, 0.1) 100%);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        border-radius: 20px;
+        padding: 24px;
+        box-shadow: 0 8px 32px rgba(139, 92, 246, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        animation: slideUp 0.6s ease-out;
+    }
+
+    .stat-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+    }
+
+    .stat-icon {
+        padding: 10px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .stat-label {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 500;
+    }
+
+    .stat-value {
+        font-size: 32px;
+        font-weight: 700;
+    }
+
+    .glass-card {
+        background: rgba(255, 255, 255, 0.05);
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 24px;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .glass-card:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #8b5cf6 0%, #3b82f6 100%);
+        border: none;
+        border-radius: 16px;
+        padding: 14px 28px;
+        color: white;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 16px rgba(139, 92, 246, 0.4);
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 24px;
+    }
+
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(139, 92, 246, 0.6);
+    }
+
+    .btn-secondary {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        border-radius: 16px;
+        padding: 14px 28px;
+        color: white;
+        font-weight: 600;
+        font-size: 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-success {
+        background: linear-gradient(135deg, #22c55e 0%, #10b981 100%);
+        border: none;
+        border-radius: 12px;
+        padding: 10px 20px;
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 16px rgba(34, 197, 94, 0.4);
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        border: none;
+        border-radius: 12px;
+        padding: 10px 20px;
+        color: white;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 4px 16px rgba(239, 68, 68, 0.4);
+    }
+
+    .form-card {
+        padding: 24px;
+        margin-bottom: 24px;
+        animation: slideUp 0.4s ease-out;
+    }
+
+    .form-group {
+        margin-bottom: 16px;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .form-input, .form-select {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 14px 16px;
+        color: white;
+        font-size: 15px;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .form-input:focus, .form-select:focus {
+        outline: none;
+        border-color: rgba(139, 92, 246, 0.5);
+        background: rgba(255, 255, 255, 0.08);
+        box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+    }
+
+    .form-input::placeholder {
+        color: rgba(255, 255, 255, 0.4);
+    }
+
+    .form-select option {
+        background: #1a1a2e;
+        color: white;
+    }
+
+    .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    .form-buttons {
+        display: flex;
+        gap: 12px;
+        margin-top: 8px;
+    }
+
+    .account-card {
+        padding: 24px;
+        margin-bottom: 16px;
+        cursor: pointer;
+        animation: slideUp 0.6s ease-out;
+    }
+
+    .account-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 20px;
+    }
+
+    .account-email {
+        font-size: 18px;
+        font-weight: 600;
+        margin: 0 0 8px 0;
+    }
+
+    .account-meta {
+        font-size: 14px;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .btn-icon {
+        padding: 8px;
+        border-radius: 10px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: none;
+        transition: all 0.2s ease;
+    }
+
+    .transaction-item {
+        background: rgba(255, 255, 255, 0.03);
+        padding: 16px;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        animation: slideUp 0.4s ease-out;
+    }
+
+    .transaction-info {
+        flex: 1;
+    }
+
+    .transaction-title {
+        font-size: 15px;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .transaction-meta {
+        font-size: 13px;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .transaction-amount {
+        font-size: 18px;
+        font-weight: 700;
+    }
+
+    .transaction-actions {
+        display: flex;
+        gap: 8px;
+        margin-left: 16px;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 8px;
+        font-size: 12px;
+        font-weight: 600;
+        margin-left: 8px;
+    }
+
+    .badge-achat {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+    }
+
+    .badge-vente {
+        background: rgba(34, 197, 94, 0.2);
+        color: #22c55e;
+    }
+
+    .badge-recu {
+        background: rgba(59, 130, 246, 0.2);
+        color: #3b82f6;
+    }
+
+    .badge-en-attente {
+        background: rgba(251, 191, 36, 0.2);
+        color: #fbbf24;
+    }
+
+    .empty-state {
+        padding: 48px 24px;
+        text-align: center;
+        animation: slideUp 0.6s ease-out;
+    }
+
+    .empty-icon {
+        background: rgba(139, 92, 246, 0.2);
+        width: 64px;
+        height: 64px;
+        border-radius: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 20px;
+    }
+
+    .empty-title {
+        font-size: 20px;
+        font-weight: 600;
+        margin: 0 0 12px 0;
+    }
+
+    .empty-description {
+        font-size: 15px;
+        color: rgba(255, 255, 255, 0.6);
+        max-width: 400px;
+        margin: 0 auto;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    @media (max-width: 768px) {
+        .title {
+            font-size: 32px;
+        }
+        .form-row {
+            grid-template-columns: 1fr;
+        }
+        .tabs {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        .transaction-item {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+        .transaction-actions {
+            margin-left: 0;
+            width: 100%;
+        }
+    }
+</style>
+```
+
+</head>
+<body>
+    <div id="app">
+        <div class="bg-effect"></div>
+        <div class="container">
+            <div class="header">
+                <h1 class="title">Vinted Manager Pro</h1>
+                <p class="subtitle">Gérez tous vos comptes et articles en un seul endroit</p>
+            </div>
+
+```
+        <div class="tabs">
+            <div class="tab active" onclick="switchTab('dashboard')">📊 Tableau de bord</div>
+            <div class="tab" onclick="switchTab('accounts')">👤 Comptes</div>
+            <div class="tab" onclick="switchTab('articles')">📦 Articles</div>
+        </div>
+
+        <!-- DASHBOARD TAB -->
+        <div id="dashboardTab">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-header">
+                        <div class="stat-icon" style="background: rgba(34, 197, 94, 0.2);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#22c55e" stroke-width="2">
+                                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                                <polyline points="17 6 23 6 23 12"></polyline>
+                            </svg>
+                        </div>
+                        <span class="stat-label">Revenus totaux</span>
+                    </div>
+                    <div class="stat-value" style="color: #22c55e;" id="totalRevenue">0.00 €</div>
+                </div>
+
+                <div class="stat-card" style="animation-delay: 0.1s;">
+                    <div class="stat-header">
+                        <div class="stat-icon" style="background: rgba(239, 68, 68, 0.2);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
+                                <polyline points="23 18 13.5 8.5 8.5 13.5 1 6"></polyline>
+                                <polyline points="17 18 23 18 23 12"></polyline>
+                            </svg>
+                        </div>
+                        <span class="stat-label">Dépenses totales</span>
+                    </div>
+                    <div class="stat-value" style="color: #ef4444;" id="totalSpent">0.00 €</div>
+                </div>
+
+                <div class="stat-card" style="animation-delay: 0.2s;">
+                    <div class="stat-header">
+                        <div class="stat-icon" style="background: rgba(139, 92, 246, 0.2);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2">
+                                <line x1="12" y1="1" x2="12" y2="23"></line>
+                                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
+                            </svg>
+                        </div>
+                        <span class="stat-label">Profit net</span>
+                    </div>
+                    <div class="stat-value" id="totalProfit">0.00 €</div>
+                </div>
+
+                <div class="stat-card" style="animation-delay: 0.3s;">
+                    <div class="stat-header">
+                        <div class="stat-icon" style="background: rgba(59, 130, 246, 0.2);">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" stroke-width="2">
+                                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                            </svg>
+                        </div>
+                        <span class="stat-label">Articles vendus</span>
+                    </div>
+                    <div class="stat-value" style="color: #3b82f6;" id="totalSold">0</div>
+                </div>
+            </div>
+
+            <div class="glass-card" style="padding: 24px; margin-bottom: 24px;">
+                <h3 style="margin: 0 0 20px 0; font-size: 20px; font-weight: 600;">Transactions récentes</h3>
+                <div id="recentTransactions"></div>
+            </div>
+        </div>
+
+        <!-- ACCOUNTS TAB -->
+        <div id="accountsTab" class="hidden">
+            <button class="btn-primary" onclick="toggleAddAccountForm()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Ajouter un compte
+            </button>
+
+            <div id="addAccountForm" class="glass-card form-card hidden">
+                <h3 style="margin-top: 0; font-size: 20px; font-weight: 600; margin-bottom: 20px;">Nouveau compte Vinted</h3>
+                <form onsubmit="addAccount(event)">
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" id="accountEmail" placeholder="exemple@email.com" required>
+                    </div>
+                    <div class="form-buttons">
+                        <button type="submit" class="btn-primary">Ajouter</button>
+                        <button type="button" class="btn-secondary" onclick="toggleAddAccountForm()">Annuler</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="accountsList"></div>
+        </div>
+
+        <!-- ARTICLES TAB -->
+        <div id="articlesTab" class="hidden">
+            <button class="btn-primary" onclick="toggleAddArticleForm()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                Ajouter un article
+            </button>
+
+            <div id="addArticleForm" class="glass-card form-card hidden">
+                <h3 style="margin-top: 0; font-size: 20px; font-weight: 600; margin-bottom: 20px;">Nouvel article</h3>
+                <form onsubmit="addArticle(event)">
+                    <div class="form-group">
+                        <label class="form-label">Compte</label>
+                        <select class="form-select" id="articleAccount" required>
+                            <option value="">Sélectionnez un compte</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Type</label>
+                        <select class="form-select" id="articleType" required onchange="updateArticleForm()">
+                            <option value="achat">Achat</option>
+                            <option value="vente">Vente</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Nom de l'article</label>
+                        <input type="text" class="form-input" id="articleName" placeholder="Pull Zara, Jean Levis..." required>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group" id="prixAchatGroup">
+                            <label class="form-label">Prix d'achat (€)</label>
+                            <input type="number" class="form-input" id="articlePrixAchat" placeholder="0.00" step="0.01" value="0">
+                        </div>
+                        <div class="form-group" id="prixVenteGroup" class="hidden">
+                            <label class="form-label">Prix de vente (€)</label>
+                            <input type="number" class="form-input" id="articlePrixVente" placeholder="0.00" step="0.01" value="0">
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Date</label>
+                            <input type="date" class="form-input" id="articleDate" required>
+                        </div>
+                        <div class="form-group" id="statusGroup">
+                            <label class="form-label">Statut</label>
+                            <select class="form-select" id="articleStatus">
+                                <option value="en-attente">En attente de réception</option>
+                                <option value="recu">Reçu</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-buttons">
+                        <button type="submit" class="btn-primary">Ajouter</button>
+                        <button type="button" class="btn-secondary" onclick="toggleAddArticleForm()">Annuler</button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="articlesList"></div>
+        </div>
+    </div>
+</div>
+
+<script>
+    let accounts = [];
+    let articles = [];
+    let currentTab = 'dashboard';
+
+    // Set today's date as default
+    document.addEventListener('DOMContentLoaded', function() {
+        const today = new Date().toISOString().split('T')[0];
+        const dateInput = document.getElementById('articleDate');
+        if (dateInput) {
+            dateInput.value = today;
+        }
+    });
+
+    function switchTab(tab) {
+        currentTab = tab;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        event.target.classList.add('active');
+
+        document.getElementById('dashboardTab').classList.toggle('hidden', tab !== 'dashboard');
+        document.getElementById('accountsTab').classList.toggle('hidden', tab !== 'accounts');
+        document.getElementById('articlesTab').classList.toggle('hidden', tab !== 'articles');
+
+        if (tab === 'dashboard') {
+            updateDashboard();
+        } else if (tab === 'accounts') {
+            renderAccounts();
+        } else if (tab === 'articles') {
+            updateAccountSelect();
+            renderArticles();
+        }
+    }
+
+    function toggleAddAccountForm() {
+        document.getElementById('addAccountForm').classList.toggle('hidden');
+    }
+
+    function toggleAddArticleForm() {
+        document.getElementById('addArticleForm').classList.toggle('hidden');
+        updateAccountSelect();
+    }
+
+    function updateArticleForm() {
+        const type = document.getElementById('articleType').value;
+        const prixAchatGroup = document.getElementById('prixAchatGroup');
+        const prixVenteGroup = document.getElementById('prixVenteGroup');
+        const statusGroup = document.getElementById('statusGroup');
+
+        if (type === 'achat') {
+            prixAchatGroup.classList.remove('hidden');
+            prixVenteGroup.classList.add('hidden');
+            statusGroup.classList.remove('hidden');
+        } else {
+            prixAchatGroup.classList.add('hidden');
+            prixVenteGroup.classList.remove('hidden');
+            statusGroup.classList.add('hidden');
+        }
+    }
+
+    function addAccount(event) {
+        event.preventDefault();
+        const email = document.getElementById('accountEmail').value;
+
+        accounts.push({
+            id: Date.now(),
+            email: email
+        });
+
+        document.getElementById('accountEmail').value = '';
+        toggleAddAccountForm();
+        renderAccounts();
+        saveData();
+    }
+
+    function deleteAccount(id) {
+        if (confirm('Voulez-vous vraiment supprimer ce compte et tous ses articles ?')) {
+            accounts = accounts.filter(acc => acc.id !== id);
+            articles = articles.filter(art => art.accountId !== id);
+            renderAccounts();
+            updateDashboard();
+            saveData();
+        }
+    }
+
+    function addArticle(event) {
+        event.preventDefault();
+
+        const accountId = parseInt(document.getElementById('articleAccount').value);
+        const type = document.getElementById('articleType').value;
+        const name = document.getElementById('articleName').value;
+        const date = document.getElementById('articleDate').value;
+        
+        let prixAchat = 0;
+        let prixVente = 0;
+        let status = 'recu';
+
+        if (type === 'achat') {
+            prixAchat = parseFloat(document.getElementById('articlePrixAchat').value) || 0;
+            status = document.getElementById('articleStatus').value;
+        } else {
+            prixVente = parseFloat(document.getElementById('articlePrixVente').value) || 0;
+        }
+
+        articles.push({
+            id: Date.now(),
+            accountId: accountId,
+            type: type,
+            name: name,
+            prixAchat: prixAchat,
+            prixVente: prixVente,
+            date: date,
+            status: status
+        });
+
+        // Reset form
+        document.getElementById('articleName').value = '';
+        document.getElementById('articlePrixAchat').value = '0';
+        document.getElementById('articlePrixVente').value = '0';
+        const today = new Date().toISOString().split('T')[0];
+        document.getElementById('articleDate').value = today;
+
+        toggleAddArticleForm();
+        renderArticles();
+        updateDashboard();
+        saveData();
+    }
+
+    function deleteArticle(id) {
+        if (confirm('Voulez-vous vraiment supprimer cet article ?')) {
+            articles = articles.filter(art => art.id !== id);
+            renderArticles();
+            updateDashboard();
+            saveData();
+        }
+    }
+
+    function markAsReceived(id) {
+        const article = articles.find(art => art.id === id);
+        if (article) {
+            article.status = 'recu';
+            renderArticles();
+            saveData();
+        }
+    }
+
+    function updateAccountSelect() {
+        const select = document.getElementById('articleAccount');
+        select.innerHTML = '<option value="">Sélectionnez un compte</option>';
+        accounts.forEach(acc => {
+            const option = document.createElement('option');
+            option.value = acc.id;
+            option.textContent = acc.email;
+            select.appendChild(option);
+        });
+    }
+
+    function renderAccounts() {
+        const list = document.getElementById('accountsList');
+        
+        if (accounts.length === 0) {
+            list.innerHTML = `
+                <div class="glass-card empty-state">
+                    <div class="empty-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="12" cy="7" r="4"></circle>
+                        </svg>
+                    </div>
+                    <h3 class="empty-title">Aucun compte ajouté</h3>
+                    <p class="empty-description">Ajoutez votre premier compte Vinted pour commencer.</p>
+                </div>
+            `;
+        } else {
+            list.innerHTML = accounts.map(account => {
+                const accountArticles = articles.filter(art => art.accountId === account.id);
+                const revenus = accountArticles.filter(a => a.type === 'vente').reduce((sum, a) => sum + a.prixVente, 0);
+                const depenses = accountArticles.filter(a => a.type === 'achat').reduce((sum, a) => sum + a.prixAchat, 0);
+                const profit = revenus - depenses;
+                const nbVentes = accountArticles.filter(a => a.type === 'vente').length;
+                const nbAchats = accountArticles.filter(a => a.type === 'achat').length;
+
+                return `
+                    <div class="glass-card account-card">
+                        <div class="account-header">
+                            <div>
+                                <h3 class="account-email">${account.email}</h3>
+                                <div class="account-meta">${nbVentes} vendus • ${nbAchats} achetés</div>
+                            </div>
+                            <button class="btn-icon" style="background: rgba(239, 68, 68, 0.2); border: 1px solid rgba(239, 68, 68, 0.3);" onclick="deleteAccount(${account.id})">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                </svg>
+                            </button>
+                        </div>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+                            <div>
+                                <div style="font-size: 12px; color: rgba(255, 255, 255, 0.5); margin-bottom: 4px;">Revenus</div>
+                                <div style="font-size: 20px; font-weight: 600; color: #22c55e;">${revenus.toFixed(2)} €</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: rgba(255, 255, 255, 0.5); margin-bottom: 4px;">Dépenses</div>
+                                <div style="font-size: 20px; font-weight: 600; color: #ef4444;">${depenses.toFixed(2)} €</div>
+                            </div>
+                            <div>
+                                <div style="font-size: 12px; color: rgba(255, 255, 255, 0.5); margin-bottom: 4px;">Profit</div>
+                                <div style="font-size: 20px; font-weight: 600; color: ${profit >= 0 ? '#22c55e' : '#ef4444'};">${profit >= 0 ? '+' : ''}${profit.toFixed(2)} €</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    }
+
+    function renderArticles() {
+        const list = document.getElementById('articlesList');
+        
+        if (articles.length === 0) {
+            list.innerHTML = `
+                <div class="glass-card empty-state">
+                    <div class="empty-icon">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#8b5cf6" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="empty-title">Aucun article ajouté</h3>
+                    <p class="empty-description">Ajoutez vos achats et ventes pour suivre vos transactions.</p>
+                </div>
+            `;
+        } else {
+            const sortedArticles = [...articles].sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            list.innerHTML = `<div class="glass-card" style="padding: 24px;">` +
+                sortedArticles.map(article => {
+                    const account = accounts.find(acc => acc.id === article.accountId);
+                    const accountEmail = account ? account.email : 'Compte supprimé';
+                    const amount = article.type === 'vente' ? article.prixVente : article.prixAchat;
+                    const dateFormatted = new Date(article.date).toLocaleDateString('fr-FR');
+
+                    return `
+                        <div class="transaction-item">
+                            <div class="transaction-info">
+                                <div class="transaction-title">
+                                    ${article.name}
+                                    <span class="badge badge-${article.type}">${article.type === 'vente' ? '💰 Vente' : '🛍️ Achat'}</span>
+                                    ${article.type === 'achat' ? `<span class="badge badge-${article.status}">${article.status === 'recu' ? '✓ Reçu' : '⏳ En attente'}</span>` : ''}
+                                </div>
+                                <div class="transaction-meta">${accountEmail} • ${dateFormatted}</div>
+                            </div>
+                            <div class="transaction-amount" style="color: ${article.type === 'vente' ? '#22c55e' : '#ef4444'};">
+                                ${article.type === 'vente' ? '+' : '-'}${amount.toFixed(2)} €
+                            </div>
+                            <div class="transaction-actions">
+                                ${article.type === 'achat' && article.status === 'en-attente' ? `
+                                    <button class="btn-success" onclick="markAsReceived(${article.id})">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <polyline points="20 6 9 17 4 12"></polyline>
+                                        </svg>
+                                    </button>
+                                ` : ''}
+                                <button class="btn-danger" onclick="deleteArticle(${article.id})">
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="3 6 5 6 21 6"></polyline>
+                                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }).join('') + '</div>';
+        }
+    }
+
+    function updateDashboard() {
+        const totalRevenue = articles.filter(a => a.type === 'vente').reduce((sum, a) => sum + a.prixVente, 0);
+        const totalSpent = articles.filter(a => a.type === 'achat').reduce((sum, a) => sum + a.prixAchat, 0);
+        const totalProfit = totalRevenue - totalSpent;
+        const totalSold = articles.filter(a => a.type === 'vente').length;
+
+        document.getElementById('totalRevenue').textContent = totalRevenue.toFixed(2) + ' €';
+        document.getElementById('totalSpent').textContent = totalSpent.toFixed(2) + ' €';
+        document.getElementById('totalProfit').textContent = (totalProfit >= 0 ? '+' : '') + totalProfit.toFixed(2) + ' €';
+        document.getElementById('totalProfit').style.color = totalProfit >= 0 ? '#22c55e' : '#ef4444';
+        document.getElementById('totalSold').textContent = totalSold;
+
+        // Recent transactions
+        const recentDiv = document.getElementById('recentTransactions');
+        const recentArticles = [...articles].sort((a, b) => new Date(b.date) - new Date(a.date)).slice(0, 5);
+
+        if (recentArticles.length === 0) {
+            recentDiv.innerHTML = '<p style="color: rgba(255, 255, 255, 0.5); text-align: center;">Aucune transaction pour le moment</p>';
+        } else {
+            recentDiv.innerHTML = recentArticles.map(article => {
+                const account = accounts.find(acc => acc.id === article.accountId);
+                const accountEmail = account ? account.email : 'Compte supprimé';
+                const amount = article.type === 'vente' ? article.prixVente : article.prixAchat;
+                const dateFormatted = new Date(article.date).toLocaleDateString('fr-FR');
+
+                return `
+                    <div class="transaction-item">
+                        <div class="transaction-info">
+                            <div class="transaction-title">
+                                ${article.name}
+                                <span class="badge badge-${article.type}">${article.type === 'vente' ? '💰 Vente' : '🛍️ Achat'}</span>
+                            </div>
+                            <div class="transaction-meta">${accountEmail} • ${dateFormatted}</div>
+                        </div>
+                        <div class="transaction-amount" style="color: ${article.type === 'vente' ? '#22c55e' : '#ef4444'};">
+                            ${article.type === 'vente' ? '+' : '-'}${amount.toFixed(2)} €
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+    }
+
+    function saveData() {
+        localStorage.setItem('vintedAccounts', JSON.stringify(accounts));
+        localStorage.setItem('vintedArticles', JSON.stringify(articles));
+    }
+
+    function loadData() {
+        const savedAccounts = localStorage.getItem('vintedAccounts');
+        const savedArticles = localStorage.getItem('vintedArticles');
+
+        if (savedAccounts) accounts = JSON.parse(savedAccounts);
+        if (savedArticles) articles = JSON.parse(savedArticles);
+
+        updateDashboard();
+    }
+
+    // Initialize
+    loadData();
+    updateDashboard();
+    updateArticleForm();
+</script>
+```
+
+</body>
+</html>
